@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Row : 위젯을 가로로 배치하는 위젯
+          // Row : 위젯을 가로로 배치 하는 위젯
           Row(
             children: [
               Container(
