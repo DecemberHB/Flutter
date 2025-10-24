@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) { // 화면 그리는 함수
     return MaterialApp(
       title: 'Flutter Demo',
-      home: const MyHomePage(title: 'Hello Flutter !'),
+      home: const MyHomePage(title: '02_Images Widget 실습'),
     );
   }
 }
@@ -44,23 +44,13 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center( // 앱화면
+      body: Column( // 앱화면
 
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+        ],
+
       ),
     );
   }
