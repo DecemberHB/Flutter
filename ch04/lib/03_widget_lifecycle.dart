@@ -1,164 +1,148 @@
 /*
-* 날짜 : 2025/10/27
-* 이름 : 박효빈
-* 내용 : State 생명 주기 실습
+  날짜 : 2025/10/27
+  이름 : 박효빈
+  내용 : State 생명주기 실습
 */
-
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp()); // 앱 시작점
+void main(){
+  runApp(MyApp()); // 앱 시작점
 }
 
-// ===========================
-// ▶ MyApp (메인 앱 구조)
-// ===========================
-class MyApp extends StatelessWidget { // StatelessWidget은 상태 변화가 없음
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // MaterialApp은 앱 전체의 기본 뼈대를 제공함
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('03_State Lifecycle(생명주기) 위젯 실습'),
+          title: const Text('03.상태 생명주기 실습'),
         ),
-        // ↓ 실제 실습할 Stateful 위젯 호출
-        body: const ParentStatefulTest(),
+        body: ParentWidget(), // 부모 Stateful 위젯 실행
       ),
     );
   }
 }
 
-// ===========================
-// ▶ ParentStatefulTest (부모 StatefulWidget)
-// ===========================
-class ParentStatefulTest extends StatefulWidget {
-  const ParentStatefulTest({super.key});
-
-  // 부모 위젯과 연결될 State 객체 생성
+// ===============================
+// ▶ 부모 Stateful 위젯
+// ===============================
+class ParentWidget extends StatefulWidget {
   @override
-  State<ParentStatefulTest> createState() => _ParentStatefulTestState();
+  State<StatefulWidget> createState() => _ParentWidgetState(); // State 객체 생성
 }
 
-// ===========================
-// ▶ 부모 State 클래스
-// ===========================
-class _ParentStatefulTestState extends State<ParentStatefulTest> {
-  int counter = 0; // 상태값 (자식에게 전달됨)
-  bool showChild = true; // 자식 위젯 표시 여부 (true면 보여줌)
+// ===============================
+// ▶ 부모 State 클래스 (실제 동작 담당)
+// ===============================
+class _ParentWidgetState extends State<ParentWidget> {
 
-  // 카운터 증가 함수
-  void _increment() {
+  // 상태값 정의
+  int counter = 0;      // 자식에게 전달할 카운트 값
+  bool showChild = true; // 자식 위젯 표시 여부
+
+  // 카운트 증가 함수
+  void _increment(){
     setState(() {
-      counter++;
+      counter++; // counter 값을 1 증가
     });
-    print('counter : $counter');
   }
 
-  // 자식 위젯 보이기 / 숨기기 토글 함수
-  void _toggleChild() {
+  // 자식 위젯 표시/숨김 토글 함수
+  void _toggleChild(){
     setState(() {
-      showChild = !showChild;
+      showChild = !showChild; // true ↔ false 전환
     });
-    print('자식 위젯 ${showChild ? "보이기" : "숨기기"}');
   }
 
   @override
   Widget build(BuildContext context) {
-    // build()는 상태가 변경될 때마다 다시 호출됨
-    print('Parent build...');
-
+    // build()는 setState가 호출될 때마다 재실행됨 (화면 다시 그림)
     return Column(
       children: [
-        // showChild 값에 따라 자식 위젯 표시 or 제거
+        // showChild가 true일 때는 ChildWidget을 보여주고, false면 제거
         showChild
-            ? ChildWidget(count: counter) // 자식에게 counter 전달
-            : const Text(
-          'ChildWidget 제거됨',
-          style: TextStyle(fontSize: 26),
+            ? ChildWidget(count: counter) // 자식에게 counter 값 전달
+            : Text('ChildWidget 제거', style: TextStyle(fontSize: 26),),
+
+        // counter 값을 증가시키는 버튼
+        ElevatedButton(
+            onPressed: _increment,
+            child: const Text('ChildWidget 상태 변경')
         ),
 
-        // 카운트 증가 버튼
+        // 자식 위젯을 생성/제거하는 버튼
         ElevatedButton(
-          onPressed: _increment,
-          child: const Text('ChildWidget 상태 변경'),
-        ),
-
-        // 자식 생성/제거 버튼
-        ElevatedButton(
-          onPressed: _toggleChild,
-          child: const Text('ChildWidget 생성/제거'),
-        ),
+            onPressed: _toggleChild,
+            child: const Text('ChildWidget 생성/제거')
+        )
       ],
     );
   }
 }
 
-// ===========================
-// ▶ ChildWidget (자식 StatefulWidget)
-// ===========================
+// ===============================
+// ▶ 자식 Stateful 위젯 선언부
+// ===============================
 class ChildWidget extends StatefulWidget {
-  // 부모에서 count 값을 받아옴 (required: 필수 매개변수)
+
+  // 부모로부터 count 값을 전달받음 (required: 반드시 전달되어야 함)
   ChildWidget({super.key, required this.count});
 
-  int count; // 부모의 counter 값을 전달받음
+  int count; // 전달받은 값 저장
 
   @override
-  State<ChildWidget> createState() {
-    print('createState() 실행 — ChildWidget의 State 객체 생성');
-    return _ChildWidgetState();
+  State<StatefulWidget> createState() {
+    print('createState...'); // State 객체가 처음 생성될 때 한 번만 실행
+    return _ChildWidgetState(); // 자식의 State 반환
   }
 }
 
-// ===========================
-// ▶ ChildWidget의 State 클래스 (진짜 생명주기 테스트 핵심)
-// ===========================
+// ===============================
+// ▶ 자식 State 클래스 (생명주기 핵심)
+// ===============================
 class _ChildWidgetState extends State<ChildWidget> {
-  // 1️⃣ 위젯이 처음 생성될 때 단 한 번 실행됨
+
   @override
   void initState() {
-    super.initState();
-    // 위젯이 처음 트리에 삽입될 때 한번만 호출
-    print('initState() 실행 — 위젯 최초 생성 시 1회 호출');
+    // 위젯이 처음 위젯 트리에 추가될 때 한 번만 실행됨
+    print('initState...');
   }
 
-  // 2️⃣ initState 직후 호출 (context나 상위 위젯 데이터 접근 가능)
   @override
   void didChangeDependencies() {
-    super.didChangeDependencies();
-    print('didChangeDependencies() 실행 — 상위 의존성이 변경될 때 호출');
+    // initState 다음에 호출되며, 상위 위젯의 데이터가 변경되면 다시 실행됨
+    print('didChangeDependencies...');
   }
 
-  // 3️⃣ 위젯이 화면에 그려질 때마다 실행 (가장 많이 호출됨)
   @override
   Widget build(BuildContext context) {
-    print('build() 실행 — 화면을 다시 그림');
+    // build는 화면이 다시 그려질 때마다 호출됨
     return Container(
       width: double.infinity,
       height: 200,
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(10),
       color: Colors.blue,
       child: Text(
-        'ChildWidget count : ${widget.count}', // 부모의 count 값 사용
-        style: const TextStyle(fontSize: 26, color: Colors.white),
+        // 부모에서 전달받은 count 값을 표시
+        'ChildWidget count : ${widget.count}',
+        style: TextStyle(fontSize: 26, color: Colors.white),
       ),
     );
   }
 
-  // 4️⃣ 부모에서 전달받은 값이 바뀌면 실행됨 (ex. count 변경) 잘 안쓰임
-  // 부모 위젯이 새 데이터와 함께 위젯을 rebuild 할 때 호출
   @override
   void didUpdateWidget(covariant ChildWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    print('didUpdateWidget() 실행 old = ${oldWidget.count}, new=${widget.count} — 부모의 속성이 변경되면 호출됨');
+    // 부모 위젯이 새로운 데이터를 전달해 rebuild 될 때 실행
+    // oldWidget은 이전의 데이터 상태를 가짐
+    print('didUpdateWidget... old=${oldWidget.count}, new=${widget.count}');
   }
 
-  // 5️⃣ 위젯이 트리에서 제거될 때 실행됨
-  // 해당 위젯이 위젯 트리에서 제거 될 때 호출
   @override
   void dispose() {
-    super.dispose();
-    print('dispose() 실행 — 위젯 제거 시 호출');
+    // 위젯이 트리에서 완전히 제거될 때 호출됨 (메모리 해제용)
+    print('dispose...');
   }
 }
