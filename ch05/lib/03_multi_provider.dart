@@ -7,7 +7,6 @@
 import 'dart:async';
 
 import 'package:ch05/02_provider_state.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,10 +27,10 @@ class ClockProvider extends ChangeNotifier {
 
 // 2.카운터 프로바이더
 class CouterProvider extends ChangeNotifier {
-  int _count = 0;           // 내부 상태값
+  int _count = 0;           // 내부 상태값 (초기화)
   int get count => _count;  // 읽기 전용 getter
 
-  void increment(){
+  void increment(){ //함수 선언 까지
     _count++;               // 카운트 증가
     notifyListeners();      // 변경된 상태 UI에 반영
   }
@@ -51,7 +50,14 @@ class CartProvider extends ChangeNotifier {
   }
 
   void remove(String product){
-    _products.remove(product); // 상품 제거
+    //_products.remove(product); // 상품 제거
+    //notifyListeners();
+
+    if (_products.length == 1) {
+      _products.clear();
+    } else {
+      _products.remove(product);
+      }
     notifyListeners();
   }
 
