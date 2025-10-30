@@ -12,7 +12,7 @@ class User1 {
   User1({required this.userid, required this.name, required this.birth, required this.age});
 
   // 팩토리 생성
-
+  // Jsondata - Datr(User1~ 객체)
   factory User1.fromJson(Map<String, dynamic> jsonData) {
     return User1(
       userid: jsonData['userid'],

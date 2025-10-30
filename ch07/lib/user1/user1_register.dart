@@ -28,12 +28,13 @@ class _User1RegisterState extends State<User1Register> {
       userid: _useridController.text,
       name: _nameController.text,
       birth: _birthController.text,
+      // int 형은 따로 체크해줘야함
       age: int.tryParse(_ageController.text) ?? 0,
     );
 
     try {
       // 서비스로 넘겨서 Dart -> JSON 변환 (MAP)
-      User1 savedUser = await service.postUser(inputUser);
+      User1 savedUser = await service.postUser(inputUser); // await ~ << 부분이 service로 넘어감
       //print('savedUser : $savedUser 등록');
       await _showDialog('등록 성공', '사용자가 성공적으로 등록되었습니다.');
     } catch (err) {
