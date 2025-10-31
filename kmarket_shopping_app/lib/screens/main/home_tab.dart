@@ -1,19 +1,34 @@
 // 홈 인덱스 선택 화면
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:kmarket_shopping_app/providers/auth_provider.dart';
+import 'package:kmarket_shopping_app/screens/main/my_tab.dart';
 import 'package:kmarket_shopping_app/screens/member/login_screen.dart';
+import 'package:kmarket_shopping_app/services/token_storage_service.dart';
+import 'package:provider/provider.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab({super.key});
+
+  final Function(int) onTapSwitch;
+
+  const HomeTab({super.key, required this.onTapSwitch});
+
+
 
   @override
   State<StatefulWidget> createState() => _HomeTabState();
-  
+
+
 }
 
+// 얘가 Provider 구독자
 class _HomeTabState extends State<HomeTab> {
+  final tokenStorageService = TokenStorageService();
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(title: _buildAppBar(context),),
       body: SingleChildScrollView( // 애로 위젯
@@ -35,19 +50,41 @@ class _HomeTabState extends State<HomeTab> {
   }
   
   // 상단 appBar 디자인 함수 (너무 많아서  build에서 처리 힘듦)
-  Widget _buildAppBar(BuildContext context){ // Widget 반환
+  Widget _buildAppBar(BuildContext context) { // Widget 반환
+
+    // AuthProvider 구독
+    final authProvider = Provider.of<AuthProvider>(context);
+    bool isLoggedIn = authProvider.isLoggedIn;
+
+    log('isLoggedIn :$isLoggedIn');
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Image.asset('images/logo.png',width: 140,),
         IconButton(
             // 로그인 버튼 클릭시 화면 이동
-            onPressed: (){
-              Navigator.of(context).push(
+            onPressed: () async {
+
+              if(isLoggedIn){
+               /* Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_)=>MyTab()),
+                );*/
+                // 마이페이지 탭 전환
+                widget.onTapSwitch(3);
+              }
+              await Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => LoginScreen())
-              );
+              ); // 로그인 X
+
+              setState(() {
+                // 로그인 O  -> m
+              });
             },
-            icon: Icon(Icons.login, size: 30,)
+            icon: Icon(
+              isLoggedIn ? Icons.person : Icons.login,
+              size: 30,
+            )
         )
       ],
     );

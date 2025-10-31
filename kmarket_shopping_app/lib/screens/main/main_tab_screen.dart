@@ -29,8 +29,8 @@ class _MainTabScreenState extends State<MainTabScreen> {
   }
   
   //  5개  TabList
-  static const List<Widget> _widgetList = [
-    HomeTab(),
+  late final List<Widget> _widgetList = [
+    HomeTab(onTapSwitch: _onTanHandler,), // HomeTap page에 선언된 OnTapSwich!
     CategoryTab(),
     SearchTab(),
     MyTab(),
