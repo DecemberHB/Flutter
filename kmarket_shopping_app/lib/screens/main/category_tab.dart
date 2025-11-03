@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kmarket_shopping_app/modals/category.dart';
+import 'package:kmarket_shopping_app/modals/category_sub.dart';
+import 'package:kmarket_shopping_app/screens/product/product_list_screen.dart';
+import 'package:kmarket_shopping_app/services/category_service.dart';
 
 class CategoryTab extends StatefulWidget {
   const CategoryTab({super.key});
@@ -13,25 +16,14 @@ class _CategoryTabState extends State<CategoryTab> {
 
   int _selectedIndex = 0; // 선택된 1차 카테고리 인덱스
 
-  // 임시 시뮬레이션 함수(나중에 통신 처리)
-  Future<List<Category>> _loadCategories() async {
-    await Future.delayed(const Duration(milliseconds: 500)); // 로딩 시뮬레이션 (선택)
-    return [
-      Category(id: 'C01', name: '의류', subCategories: ['상의', '하의', '아우터']),
-      Category(id: 'C02', name: '식품', subCategories: ['과일', '채소', '정육']),
-      Category(id: 'C03', name: '가전', subCategories: ['TV', '냉장고', '세탁기']),
-      Category(id: 'C04', name: '뷰티', subCategories: ['화장품', '향수', '스킨케어']),
-      Category(id: 'C05', name: '생활용품', subCategories: ['청소도구', '욕실용품', '주방용품']),
-      Category(id: 'C06', name: '홈인테리어', subCategories: ['가구', '조명', '커튼']),
-      Category(id: 'C07', name: '완구/취미', subCategories: ['레고', '보드게임', '프라모델']),
-      Category(id: 'C08', name: '반려동물', subCategories: ['사료', '간식', '장난감']),
-    ];
-  }
+  CategoryService service = CategoryService();
+
+
 
   @override
   void initState() {
     super.initState();
-    _categories = _loadCategories();
+    _categories = service.fetchCategories();
   }
 
   @override
@@ -109,7 +101,7 @@ class _CategoryTabState extends State<CategoryTab> {
   }
 
   // 2차 카테고리 리스트
-  Widget _buildSecondaryCategory(List<String> subCategories) {
+  Widget _buildSecondaryCategory(List<CategorySub> subCategories) {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -128,14 +120,41 @@ class _CategoryTabState extends State<CategoryTab> {
                 ),
                 itemCount: subCategories.length,
                 itemBuilder: (context, index) {
-                  return Container(
+
+                  return GestureDetector(
+                    // 제스쳐 함수 생성
+                    onTap: (){
+                      // 상품 목록 이동
+                      Navigator.of(context).push( // ProductListScreen 생성자 호출
+                        MaterialPageRoute(builder: (context) => ProductListScreen(
+                          // 추가로 호출 왜 이렇게 참조되는지 리뷰해야함
+                          categoryNum: subCategories[index].id,
+                          categoryName: subCategories[index].name,
+                        )),
+                      );
+
+                    },
+
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(subCategories[index].name),
+                    ),
+                  );
+
+
+                  return Container( // 이벤트 넣어줘야함  -> 2차카테고리 클릭하면 거기에 맞는 리스트 출력
                     padding: const EdgeInsets.all(8.0),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: Text(subCategories[index]),
+                    child: Text(subCategories[index].name),
                   );
                 },
               ),

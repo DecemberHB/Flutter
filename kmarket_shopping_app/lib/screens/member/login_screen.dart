@@ -42,7 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // 서비스 호출(실 서비스 구현) 비동기 함수라 await , asyc  + 예외처리
+    //https://chhak0503.notion.site/BNK-DT-2-2297537e85eb800481d4c44f117f255b
+    
+    // 서비스 호출(실 서비스 구현) 비동기 함수라 await , async  + 예외처리
     try {
       Map<String, dynamic> jsonData = await service.login(usid, pass);
       // 액세스 토큰 가져오기 (중요())
