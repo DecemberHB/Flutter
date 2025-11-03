@@ -10,6 +10,7 @@
  */
 
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 class ProductService {
@@ -32,8 +33,10 @@ class ProductService {
     try {
       // 🔹 GET 요청 보내기 (백엔드 API 호출)
       final response = await http.get(
-        Uri.parse('$baseUrl/product?category=$category&pg=$pg'),
-      );
+        Uri.parse('$baseUrl/product?category=$category&pg=$pg'));
+
+      log('페이지 : $pg');
+
 
       // 🔹 응답 상태코드가 200(성공)일 때
       if (response.statusCode == 200) {

@@ -13,6 +13,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kmarket_shopping_app/config/app_config.dart';
 import 'package:kmarket_shopping_app/modals/product.dart';
+import 'package:kmarket_shopping_app/screens/product/product_view_screen.dart';
 
 class ProductListItem extends StatelessWidget {
 
@@ -26,14 +27,19 @@ class ProductListItem extends StatelessWidget {
   Widget build(BuildContext context) {
 
     // 할인율을 적용한 최종 판매가 계산
-    final finalPrice = product.price * (1 - product.discount / 100);
+    final finalPrice = product.price * (1 - product.discount / 100).round();
 
     return GestureDetector(
       // 🔹 상품 클릭 시 이벤트 (현재는 SnackBar만 표시)
       // 🔸 나중에 상세페이지(ProductDetailScreen)로 이동 예정
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
+       /* ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('상세 상품 이동')),
+        );*/
+        
+        // 상품 상세 이동
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => ProductViewScreen(product: product,)),
         );
       },
 
@@ -66,7 +72,11 @@ class ProductListItem extends StatelessWidget {
                       overflow: TextOverflow.ellipsis, // 긴 상품명은 "..." 처리
                     ),
                     Text('가격 : ${product.price} (할인율 : ${product.discount}%)'),
-                    Text('최종가격 : $finalPrice'),
+                    Text('최종가격 : $finalPrice',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.purpleAccent
+                      ),),
                   ],
                 ),
               ),

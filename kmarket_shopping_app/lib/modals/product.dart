@@ -54,6 +54,7 @@ class Product {
    * 사용 예시 :
    * final product = Product.fromJson(jsonData);
    */
+  // 여기의 json => response에서 넘어온 product
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       pno: json['pno'],
