@@ -10,9 +10,16 @@
  * - 상품 상세 이미지 출력
  */
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kmarket_shopping_app/config/app_config.dart';
+import 'package:kmarket_shopping_app/modals/cart.dart';
 import 'package:kmarket_shopping_app/modals/product.dart';
+import 'package:kmarket_shopping_app/providers/auth_provider.dart';
+import 'package:kmarket_shopping_app/screens/member/login_screen.dart';
+import 'package:kmarket_shopping_app/services/cart_service.dart';
+import 'package:provider/provider.dart';
 
 class ProductViewScreen extends StatefulWidget {
 
@@ -29,9 +36,42 @@ class _ProductViewScreen extends State<ProductViewScreen> {
 
   // 🔹 수량 선택 상태 변수 (기본 1개)
   int _quantity = 1;
+// 장바구니 서비스 호출
+  final cartService = CartService();
+  // 장바구니 추가 함수
+  Future<void> _addCart() async{
+    // pno => product 안에있음
+    int pno = widget.product.pno;
+    Map<String, dynamic> jsonData = await cartService.addCart(pno, _quantity);
+    Cart savedCart = Cart.fromJson(jsonData);
+    log('savedCart : $savedCart');
+
+    // 추가 사용자 편의 UI 제공 if문
+    if(jsonData.isNotEmpty) {
+      showDialog(
+          context: context,
+          builder: (context) =>
+              AlertDialog(
+                title: const Text('장바구니 등록 성공!!'),
+                content: const Text('상품이 장바구니에 담겼습니다.'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('확인')),
+                ],
+              ),
+
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    // 로그인 상태가져오기 (Provider)
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isLoggedIn = authProvider.isLoggedIn; // 로그인 상태 가져오기
+
 
     // 🔸 부모 위젯(ProductViewScreen)에서 전달받은 상품 참조
     final product = widget.product;
@@ -51,14 +91,12 @@ class _ProductViewScreen extends State<ProductViewScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // 🔹 상품 대표 이미지
-            SizedBox(
-              height: 300,
-              width: double.infinity,
+            ClipRect(
               child: Image.network(
+                width: double.infinity,
                 '${AppConfig.baseUrl}/product/image/${product.thumb240}',
-                fit: BoxFit.cover, // 이미지 꽉 채우기
+                fit: BoxFit.fitWidth, // 가로폭 전체 채우고 이미지 비율 유지
               ),
             ),
 
@@ -147,7 +185,32 @@ class _ProductViewScreen extends State<ProductViewScreen> {
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      // TODO: 장바구니 기능 추가 예정
+                      if(isLoggedIn) {
+                        _addCart();
+                      }else {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('로그인이 필요합니다'),
+                              content: const Text('장바구니에 상품을 담으려면 로그인이 필요합니다, 로그인 화면으로 이동하시겠습니까 ? '),
+                              actions: [
+                                TextButton(onPressed: () => Navigator.pop(context),
+                                    child: const Text('취소')
+                                ),
+                                TextButton(onPressed: () {
+                                  Navigator.pop(context); // Alert 닫기
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const LoginScreen(),
+                                      ),
+                                  );
+                                },
+                                    child: const Text('로그인으로 이동'),
+                                )
+                              ],
+                            )
+                        );
+                      }
                     },
                     label: const Text('장바구니'),
                     icon: Icon(Icons.shopping_cart),
