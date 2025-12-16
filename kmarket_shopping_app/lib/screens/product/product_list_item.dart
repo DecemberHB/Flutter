@@ -64,7 +64,7 @@ class ProductListItem extends StatelessWidget {
               // 상품 정보 텍스트 영역
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment .start,
                   children: [
                     Text('상품번호 : ${product.pno}'),
                     Text(

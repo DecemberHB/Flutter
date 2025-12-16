@@ -31,45 +31,152 @@ class _MyTabState extends State<MyTab> {
     );
   }
 
-// 로그인 후 사용자 정보 화면 디자인 함수
-    Widget _buildLoggedIn() {
-      return SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('환영합니다, 고객님!', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                      Text('현재 포인트: 1000P', style: const TextStyle(fontSize: 18, color: Colors.blue)),
-                    ],
+  Widget _buildLoggedIn() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            // =====================
+            // 상단 사용자 영역
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '유저',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: const [
+                    Text('메인페이지'),
+                    SizedBox(width: 12),
+                    Text('알림'),
+                    SizedBox(width: 12),
+                    Text('로그아웃'),
+                  ],
+                )
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            // =====================
+            // 배너 광고
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: const [
+                  Text(
+                    '배너광고',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  const Spacer(),
-                  ElevatedButton(
-                    onPressed: () {
-                      // 로그아웃 처리 -> Provider
-                      context.read<AuthProvider>().logout();
-                    },
-                    child: const Text('로그아웃'),
-                  )
+                  SizedBox(height: 8),
+                  Text('• MAP 이벤트 안내'),
+                  Text('• MAP으로 이동'),
                 ],
               ),
+            ),
 
-              const Divider(height: 30),
-              _buildInfoTile('주문내역', '총 0건'),
-              _buildInfoTile('배송내역', '총 0건'),
-              _buildInfoTile('관심상품', '15개'),
-              const Divider(height: 30),
+            const SizedBox(height: 20),
 
-            ],
-          ),
+            // =====================
+            // 내 카드 타이틀
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  '내 카드 >',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text('내 카드 관리'),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            // =====================
+            // 카드 정보 카드
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('카드명 | 카드번호 뒷자리'),
+                        SizedBox(height: 8),
+                        Text(
+                          'N월 이용금액',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          '000,000원',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 80,
+                    height: 50,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: const Text('카드 이미지'),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // =====================
+            // 받은 혜택
+            const Text(
+              '받은 혜택',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 12),
+
+            _buildBenefitBar('교통', 0.7, '000,000원'),
+            _buildBenefitBar('외식', 0.5, '000,000원'),
+            _buildBenefitBar('여가', 0.3, '000,000원'),
+
+            const SizedBox(height: 20),
+
+            // =====================
+            // 마이 화면 편집 버튼
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {},
+                child: const Text('마이 화면 편집'),
+              ),
+            ),
+          ],
         ),
-      );
-    }
+      ),
+    );
+  }
+
 
     Widget _buildInfoTile(String title, String value) {
       return ListTile(
@@ -80,6 +187,30 @@ class _MyTabState extends State<MyTab> {
         },
       );
     }
+  Widget _buildBenefitBar(String title, double value, String amount) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title),
+              Text(amount),
+            ],
+          ),
+          const SizedBox(height: 6),
+          LinearProgressIndicator(
+            value: value,
+            minHeight: 8,
+            backgroundColor: Colors.grey.shade300,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
